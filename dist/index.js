@@ -5207,13 +5207,13 @@ module.exports.showProblems = showProblems;
 
 /***/ }),
 
-/***/ "./node_modules/piral-cli-webpack5/src/webpack-hot-middleware/client.js?path=http://localhost:50744/__webpack_hmr&reload=true":
+/***/ "./node_modules/piral-cli-webpack5/src/webpack-hot-middleware/client.js?path=http://localhost:50866/__webpack_hmr&reload=true":
 /*!************************************************************************************************************************************!*\
-  !*** ./node_modules/piral-cli-webpack5/src/webpack-hot-middleware/client.js?path=http://localhost:50744/__webpack_hmr&reload=true ***!
+  !*** ./node_modules/piral-cli-webpack5/src/webpack-hot-middleware/client.js?path=http://localhost:50866/__webpack_hmr&reload=true ***!
   \************************************************************************************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var __resourceQuery = "?path=http://localhost:50744/__webpack_hmr&reload=true";
+var __resourceQuery = "?path=http://localhost:50866/__webpack_hmr&reload=true";
 /* module decorator */ module = __webpack_require__.nmd(module);
 /*eslint-env browser*/
 /*global __resourceQuery __webpack_public_path__*/
@@ -8819,7 +8819,7 @@ function installPiralDebug(options) {
             dependencies: "tslib,react,react-dom,react-router,react-router-dom",
         },
         build: {
-            date: "2023-04-01T09:52:13.926Z",
+            date: "2023-04-01T09:55:12.029Z",
             cli: "0.15.8",
             compat: "0.15",
         },
@@ -47558,7 +47558,7 @@ function invariant(condition, message) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	(() => {
-/******/ 		__webpack_require__.h = () => ("f1d2c41c12666111b45f")
+/******/ 		__webpack_require__.h = () => ("8f2d4ff55799ca245811")
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/global */
@@ -48654,7 +48654,7 @@ function invariant(condition, message) {
 /******/ 	// module cache are used so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	__webpack_require__("./node_modules/piral-cli-webpack5/src/webpack-hot-middleware/client.js?path=http://localhost:50744/__webpack_hmr&reload=true");
+/******/ 	__webpack_require__("./node_modules/piral-cli-webpack5/src/webpack-hot-middleware/client.js?path=http://localhost:50866/__webpack_hmr&reload=true");
 /******/ 	__webpack_require__("./src/style.scss");
 /******/ 	var __webpack_exports__ = __webpack_require__("./src/index.tsx");
 /******/ 	
