@@ -5,7 +5,7 @@ import { layout, errors } from './layout';
 import { createVueApi } from 'piral-vue';
 
 // change to your feed URL here (either using feed.piral.cloud or your own service)
-const feedUrl = 'https://feed.piral.cloud/api/v1/pilet/empty';
+const feedUrl = 'https://feed.piral.cloud/api/v1/pilet/damondeletter-webshop';
 
 const instance = createInstance({
   state: {
