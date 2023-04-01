@@ -9,10 +9,12 @@
     "piral": "0.15.8",
     "piral-base": "0.15.8",
     "piral-core": "0.15.8",
+    "piral-vue": "^0.15.8",
     "react": "^18",
     "react-dom": "^18",
     "react-router": "^5",
-    "react-router-dom": "^5"
+    "react-router-dom": "^5",
+    "vue": "^2.0.0"
   },
   "scripts": {
     "start": "piral debug",

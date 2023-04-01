@@ -235,7 +235,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
 
 // change to your feed URL here (either using feed.piral.cloud or your own service)
-var feedUrl = 'https://feed.piral.cloud/api/v1/pilet/empty';
+var feedUrl = 'https://feed.piral.cloud/api/v1/pilet/damondeletter-webshop';
 var instance = (0,piral__WEBPACK_IMPORTED_MODULE_3__.createInstance)({
   state: {
     components: _layout__WEBPACK_IMPORTED_MODULE_2__.layout,
@@ -271,10 +271,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
 /* harmony import */ var piral__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! piral */ "./node_modules/piral-core/esm/components/SwitchErrorInfo.js");
 /* harmony import */ var piral__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! piral */ "./node_modules/piral-notifications/esm/Notifications.js");
 /* harmony import */ var piral__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! piral */ "./node_modules/piral-menu/esm/Menu.js");
+/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
@@ -290,51 +290,13 @@ var MenuItem = function MenuItem(_ref) {
     className: "nav-item"
   }, children);
 };
-var defaultTiles = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-  className: "tile rows-2 cols-2"
-}, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-  className: "teaser"
-}, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", {
-  href: "https://piral.io/"
-}, "Piral"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("br", null), "for next generation portals")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-  className: "tile rows-2 cols-2"
-}, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-  className: "teaser"
-}, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", {
-  href: "https://www.typescriptlang.org/"
-}, "TypeScript"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("br", null), "for writing scalable web apps")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-  className: "tile rows-2 cols-2"
-}, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-  className: "teaser"
-}, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", {
-  href: "https://reactjs.org/"
-}, "React"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("br", null), "for building components")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-  className: "tile rows-2 cols-2"
-}, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-  className: "teaser"
-}, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", {
-  href: "http://getbootstrap.com/"
-}, "Bootstrap"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("br", null), "for layout and styling")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-  className: "tile rows-2 cols-2"
-}, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-  className: "teaser"
-}, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", {
-  href: "https://sass-lang.com"
-}, "Sass"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("br", null), "for crafting custom styles")));
-var defaultMenuItems = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(MenuItem, {
-  type: "general",
-  meta: {}
-}, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Link, {
-  className: "nav-link text-dark",
-  to: "/not-found"
-}, "Not Found")));
 var errors = {
   not_found: function not_found() {
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", {
       className: "error"
-    }, "Could not find the requested page. Are you sure it exists?"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, "Go back ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Link, {
+    }, "De pagina die u wenst te bezoeken is niet beschikbaar. Bent u zeker dat deze pagina bestaat?"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, "Keer terug ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Link, {
       to: "/"
-    }, "to the dashboard"), "."));
+    }, "naar nomadr-webshop"), "."));
   }
 };
 var layout = {
@@ -343,40 +305,34 @@ var layout = {
   },
   DashboardContainer: function DashboardContainer(_ref2) {
     var children = _ref2.children;
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h1", null, "Hello, world!"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, "Welcome to your new microfrontend app shell, built with:"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      className: "tiles"
-    }, defaultTiles, children));
-  },
-  DashboardTile: function DashboardTile(_ref3) {
-    var columns = _ref3.columns,
-      rows = _ref3.rows,
-      children = _ref3.children;
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      className: "tile cols-".concat(columns, " rows-").concat(rows)
+      className: "main-container -app-shell"
     }, children);
   },
-  Layout: function Layout(_ref4) {
-    var children = _ref4.children;
+  Layout: function Layout(_ref3) {
+    var children = _ref3.children;
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(piral__WEBPACK_IMPORTED_MODULE_3__.Notifications, null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(piral__WEBPACK_IMPORTED_MODULE_4__.Menu, {
       type: "general"
     }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
       className: "container"
     }, children));
   },
-  MenuContainer: function MenuContainer(_ref5) {
-    var children = _ref5.children;
+  MenuContainer: function MenuContainer(_ref4) {
+    var children = _ref4.children;
     var _React$useState = react__WEBPACK_IMPORTED_MODULE_0__.useState(true),
       _React$useState2 = _slicedToArray(_React$useState, 2),
       collapsed = _React$useState2[0],
       setCollapsed = _React$useState2[1];
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("header", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("nav", {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("header", {
+      className: "-app-shell"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("nav", {
       className: "navbar navbar-light navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
       className: "container"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__.Link, {
       className: "navbar-brand",
       to: "/"
-    }, "Piral"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
+    }, "Nomadr-webshop"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
       "aria-label": "Toggle navigation",
       type: "button",
       onClick: function onClick() {
@@ -390,32 +346,9 @@ var layout = {
       "aria-expanded": !collapsed
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("ul", {
       className: "navbar-nav flex-grow"
-    }, children, defaultMenuItems)))));
+    }, children)))));
   },
-  MenuItem: MenuItem,
-  NotificationsHost: function NotificationsHost(_ref6) {
-    var children = _ref6.children;
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      className: "notifications"
-    }, children);
-  },
-  NotificationsToast: function NotificationsToast(_ref7) {
-    var options = _ref7.options,
-      onClose = _ref7.onClose,
-      children = _ref7.children;
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      className: "notification-toast ".concat(options.type)
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      className: "notification-toast-details"
-    }, options.title && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      className: "notification-toast-title"
-    }, options.title), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      className: "notification-toast-description"
-    }, children)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      className: "notification-toast-close",
-      onClick: onClose
-    }));
-  }
+  MenuItem: MenuItem
 };
 
 /***/ }),
@@ -5207,13 +5140,13 @@ module.exports.showProblems = showProblems;
 
 /***/ }),
 
-/***/ "./node_modules/piral-cli-webpack5/src/webpack-hot-middleware/client.js?path=http://localhost:50866/__webpack_hmr&reload=true":
+/***/ "./node_modules/piral-cli-webpack5/src/webpack-hot-middleware/client.js?path=http://localhost:50744/__webpack_hmr&reload=true":
 /*!************************************************************************************************************************************!*\
-  !*** ./node_modules/piral-cli-webpack5/src/webpack-hot-middleware/client.js?path=http://localhost:50866/__webpack_hmr&reload=true ***!
+  !*** ./node_modules/piral-cli-webpack5/src/webpack-hot-middleware/client.js?path=http://localhost:50744/__webpack_hmr&reload=true ***!
   \************************************************************************************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var __resourceQuery = "?path=http://localhost:50866/__webpack_hmr&reload=true";
+var __resourceQuery = "?path=http://localhost:50744/__webpack_hmr&reload=true";
 /* module decorator */ module = __webpack_require__.nmd(module);
 /*eslint-env browser*/
 /*global __resourceQuery __webpack_public_path__*/
@@ -8819,7 +8752,7 @@ function installPiralDebug(options) {
             dependencies: "tslib,react,react-dom,react-router,react-router-dom",
         },
         build: {
-            date: "2023-04-01T09:55:12.029Z",
+            date: "2023-04-01T09:52:13.926Z",
             cli: "0.15.8",
             compat: "0.15",
         },
@@ -47558,7 +47491,7 @@ function invariant(condition, message) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	(() => {
-/******/ 		__webpack_require__.h = () => ("8f2d4ff55799ca245811")
+/******/ 		__webpack_require__.h = () => ("7c4fcf75bd09a4bcab94")
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/global */
@@ -48654,7 +48587,7 @@ function invariant(condition, message) {
 /******/ 	// module cache are used so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	__webpack_require__("./node_modules/piral-cli-webpack5/src/webpack-hot-middleware/client.js?path=http://localhost:50866/__webpack_hmr&reload=true");
+/******/ 	__webpack_require__("./node_modules/piral-cli-webpack5/src/webpack-hot-middleware/client.js?path=http://localhost:50744/__webpack_hmr&reload=true");
 /******/ 	__webpack_require__("./src/style.scss");
 /******/ 	var __webpack_exports__ = __webpack_require__("./src/index.tsx");
 /******/ 	
