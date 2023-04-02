@@ -221,16 +221,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react_dom_client__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom/client */ "./node_modules/react-dom/client.js");
 /* harmony import */ var piral__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! piral */ "./node_modules/piral-core/esm/createInstance.js");
-/* harmony import */ var piral__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! piral */ "./node_modules/piral-ext/esm/create.js");
-/* harmony import */ var piral__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! piral */ "./node_modules/piral-core/esm/Piral.js");
+/* harmony import */ var piral__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! piral */ "./node_modules/piral-ext/esm/create.js");
+/* harmony import */ var piral__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! piral */ "./node_modules/piral-core/esm/Piral.js");
 /* harmony import */ var _layout__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./layout */ "./src/layout.tsx");
-/* harmony import */ var piral_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! piral-vue */ "./node_modules/piral-vue/esm/create.js");
+/* harmony import */ var piral_vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! piral-vue */ "./node_modules/piral-vue/esm/create.js");
+/* harmony import */ var piral_svelte__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! piral-svelte */ "./node_modules/piral-svelte/esm/create.js");
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+
 
 
 
@@ -243,7 +245,7 @@ var instance = (0,piral__WEBPACK_IMPORTED_MODULE_3__.createInstance)({
     components: _layout__WEBPACK_IMPORTED_MODULE_2__.layout,
     errorComponents: _layout__WEBPACK_IMPORTED_MODULE_2__.errors
   },
-  plugins: [(0,piral_vue__WEBPACK_IMPORTED_MODULE_4__.createVueApi)()].concat(_toConsumableArray((0,piral__WEBPACK_IMPORTED_MODULE_5__.createStandardApi)())),
+  plugins: [(0,piral_svelte__WEBPACK_IMPORTED_MODULE_4__.createSvelteApi)(), (0,piral_vue__WEBPACK_IMPORTED_MODULE_5__.createVueApi)()].concat(_toConsumableArray((0,piral__WEBPACK_IMPORTED_MODULE_6__.createStandardApi)())),
   requestPilets: function requestPilets() {
     return fetch(feedUrl).then(function (res) {
       return res.json();
@@ -253,7 +255,7 @@ var instance = (0,piral__WEBPACK_IMPORTED_MODULE_3__.createInstance)({
   }
 });
 var root = (0,react_dom_client__WEBPACK_IMPORTED_MODULE_1__.createRoot)(document.querySelector('#app'));
-root.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(piral__WEBPACK_IMPORTED_MODULE_6__.Piral, {
+root.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(piral__WEBPACK_IMPORTED_MODULE_7__.Piral, {
   instance: instance
 }));
 
@@ -8342,7 +8344,7 @@ function installPiralDebug(options) {
             dependencies: "tslib,react,react-dom,react-router,react-router-dom",
         },
         build: {
-            date: "2023-04-02T09:21:48.162Z",
+            date: "2023-04-02T13:30:31.172Z",
             cli: "0.15.8",
             compat: "0.15",
         },
@@ -9645,6 +9647,108 @@ __webpack_require__.r(__webpack_exports__);
 const DefaultHost = (props) => (react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", { className: "piral-notifications-host", key: "default_notifications" }, props.children));
 const DefaultToast = ({ children }) => (0,piral_core__WEBPACK_IMPORTED_MODULE_1__.defaultRender)(children);
 //# sourceMappingURL=default.js.map
+
+/***/ }),
+
+/***/ "./node_modules/piral-svelte/esm/converter.js":
+/*!****************************************************!*\
+  !*** ./node_modules/piral-svelte/esm/converter.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "createConverter": () => (/* binding */ createConverter)
+/* harmony export */ });
+/* harmony import */ var _extension__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./extension */ "./node_modules/piral-svelte/esm/extension.js");
+
+function createConverter(config = {}) {
+    const { selector = 'svelte-extension' } = config;
+    const Extension = (0,_extension__WEBPACK_IMPORTED_MODULE_0__.createExtension)(selector);
+    const convert = (Component, captured) => ({
+        mount(parent, data, ctx, locals) {
+            locals.instance = new Component({
+                target: parent,
+                props: Object.assign(Object.assign(Object.assign({}, captured), ctx), data),
+            });
+        },
+        update(el, data, ctx, locals) {
+            Object.keys(data).forEach((key) => {
+                locals.instance[key] = data[key];
+            });
+        },
+        unmount(el, locals) {
+            locals.instance.$destroy();
+            locals.instance = undefined;
+            el.innerHTML = '';
+        },
+    });
+    convert.Extension = Extension;
+    return convert;
+}
+//# sourceMappingURL=converter.js.map
+
+/***/ }),
+
+/***/ "./node_modules/piral-svelte/esm/create.js":
+/*!*************************************************!*\
+  !*** ./node_modules/piral-svelte/esm/create.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "createSvelteApi": () => (/* binding */ createSvelteApi)
+/* harmony export */ });
+/* harmony import */ var _converter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./converter */ "./node_modules/piral-svelte/esm/converter.js");
+
+/**
+ * Creates new Pilet API extensions for integration of Svelte.
+ */
+function createSvelteApi(config = {}) {
+    return (context) => {
+        const convert = (0,_converter__WEBPACK_IMPORTED_MODULE_0__.createConverter)(config);
+        context.converters.svelte = ({ Component, captured }) => convert(Component, captured);
+        return {
+            fromSvelte(Component, captured) {
+                return {
+                    type: 'svelte',
+                    Component,
+                    captured,
+                };
+            },
+            SvelteExtension: convert.Extension,
+        };
+    };
+}
+//# sourceMappingURL=create.js.map
+
+/***/ }),
+
+/***/ "./node_modules/piral-svelte/esm/extension.js":
+/*!****************************************************!*\
+  !*** ./node_modules/piral-svelte/esm/extension.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "createExtension": () => (/* binding */ createExtension)
+/* harmony export */ });
+function createExtension(selector) {
+    const defaultExtensionSelector = 'piral-extension';
+    if ('customElements' in window && selector && selector !== defaultExtensionSelector) {
+        const ExtensionBase = customElements.get(defaultExtensionSelector);
+        class AliasExtension extends ExtensionBase {
+        }
+        customElements.define(selector, AliasExtension);
+    }
+    return selector || defaultExtensionSelector;
+}
+//# sourceMappingURL=extension.js.map
 
 /***/ }),
 
@@ -56636,7 +56740,7 @@ function invariant(condition, message) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	(() => {
-/******/ 		__webpack_require__.h = () => ("1c44b2432fa92f4d80bd")
+/******/ 		__webpack_require__.h = () => ("b7a9734dac2d5a4ba6ff")
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/global */

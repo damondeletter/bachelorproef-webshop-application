@@ -38,7 +38,7 @@ export interface EventEmitter {
 /**
  * Custom Pilet API parts defined outside of piral-core.
  */
-export interface PiletCustomApi extends PiletLocaleApi, PiletDashboardApi, PiletMenuApi, PiletNotificationsApi, PiletModalsApi, PiletFeedsApi, PiletVueApi {}
+export interface PiletCustomApi extends PiletLocaleApi, PiletDashboardApi, PiletMenuApi, PiletNotificationsApi, PiletModalsApi, PiletFeedsApi, PiletVueApi, PiletSvelteApi {}
 
 /**
  * Defines the Pilet API from piral-core.
@@ -315,6 +315,23 @@ export interface PiletVueApi {
 }
 
 /**
+ * Defines the provided set of Svelte Pilet API extensions.
+ */
+export interface PiletSvelteApi {
+  /**
+   * Wraps a Svelte module for use in Piral.
+   * @param Component The name of the root component.
+   * @param captured The optionally captured props.
+   * @returns The Piral Svelte component.
+   */
+  fromSvelte<TProps>(Component: SvelteModule<TProps>, captured?: Record<string, any>): SvelteComponent<TProps>;
+  /**
+   * Gets the name of the Svelte extension.
+   */
+  SvelteExtension: string;
+}
+
+/**
  * Defines the shape of the data store for storing shared data.
  */
 export interface SharedData<TValue = any> {
@@ -565,6 +582,25 @@ export interface VueComponent<TProps> {
    * Captures props for transport into the Vue component.
    */
   captured?: Record<string, any>;
+}
+
+export interface SvelteModule<TProps> {
+  new (opts: SvelteOptions<TProps>): SvelteComponentInstance<TProps>;
+}
+
+export interface SvelteComponent<TProps> {
+  /**
+   * The name of the Svelte main module to render.
+   */
+  Component: SvelteModule<TProps>;
+  /**
+   * Captures props for transport into the Svelte component.
+   */
+  captured?: Record<string, any>;
+  /**
+   * The type of the Svelte component.
+   */
+  type: "svelte";
 }
 
 /**
@@ -915,6 +951,15 @@ export type DefaultComputed = {
 
 export type DefaultProps = Record<string, any>;
 
+export interface SvelteOptions<TProps> {
+  target: Element;
+  props: TProps;
+}
+
+export type SvelteComponentInstance<TProps> = TProps & {
+  $destroy(): void;
+};
+
 export type FirstParameter<T extends (arg: any) => any> = T extends (arg: infer P) => any ? P : never;
 
 /**
@@ -922,6 +967,7 @@ export type FirstParameter<T extends (arg: any) => any> = T extends (arg: infer 
  */
 export interface PiralCustomComponentConverters<TProps> {
   vue(component: VueComponent<TProps>): ForeignComponent<TProps>;
+  svelte(component: SvelteComponent<TProps>): ForeignComponent<TProps>;
 }
 
 /**
