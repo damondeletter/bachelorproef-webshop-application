@@ -14,7 +14,7 @@
     "react-dom": "^18",
     "react-router": "^5",
     "react-router-dom": "^5",
-    "vue": "^2.0.0"
+    "vue": "^2.6.10"
   },
   "scripts": {
     "start": "piral debug",

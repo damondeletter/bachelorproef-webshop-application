@@ -1,15 +1,17 @@
 import * as React from 'react';
 import { ComponentsState, ErrorComponentsState, Menu, Notifications, SwitchErrorInfo, MenuItemProps } from 'piral';
 import { Link } from 'react-router-dom';
+import "./layout.css";
 
 const MenuItem: React.FC<MenuItemProps> = ({ children }) => <li className="nav-item">{children}</li>;
 
 export const errors: Partial<ErrorComponentsState> = {
   not_found: () => (
-    <div>
-      <p className="error">De pagina die u wenst te bezoeken is niet beschikbaar. Bent u zeker dat deze pagina bestaat?</p>
+    <div className='notfound'>
+      <img src="https://static.vecteezy.com/system/resources/previews/003/309/116/non_2x/ghost-character-illustration-holding-a-stop-sign-free-vector.jpg"/>
+      <p>De pagina die u wenst te bezoeken is niet beschikbaar. Bent u zeker dat deze pagina bestaat?</p>
       <p>
-        Keer terug <Link to="/">naar nomadr-webshop</Link>.
+        <Link to="/" className="center-btn btn btn-default">Keer terug naar nomadr-webshop</Link>.
       </p>
     </div>
   ),
@@ -17,9 +19,13 @@ export const errors: Partial<ErrorComponentsState> = {
 
 export const layout: Partial<ComponentsState> = {
   ErrorInfo: props => (
-    <div>
-      <h1>Error</h1>
+    <div className="notfound">
+      <h1>Oepsie..</h1>
       <SwitchErrorInfo {...props} />
+      <p>Er is iets foutgelopen...</p>
+      <p>
+        <Link to="/" className="center-btn btn btn-default">Keer terug naar nomadr-webshop</Link>.
+      </p>
     </div>
   ),
   DashboardContainer: ({ children }) => (
