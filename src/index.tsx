@@ -4,6 +4,7 @@ import { createInstance, Piral, createStandardApi } from 'piral';
 import { layout, errors } from './layout';
 import { createVueApi } from 'piral-vue';
 import { createSvelteApi } from 'piral-svelte';
+import { createSolidApi } from 'piral-solid';
 
 // change to your feed URL here (either using feed.piral.cloud or your own service)
 const feedUrl = 'https://feed.piral.cloud/api/v1/pilet/damondeletter-webshop';
@@ -13,7 +14,7 @@ const instance = createInstance({
     components: layout,
     errorComponents: errors,
   },
-  plugins: [createSvelteApi(), createVueApi(),...createStandardApi(),],
+  plugins: [createSolidApi(), createSvelteApi(), createVueApi(),...createStandardApi(),],
   requestPilets() {
     return fetch(feedUrl)
       .then((res) => res.json())

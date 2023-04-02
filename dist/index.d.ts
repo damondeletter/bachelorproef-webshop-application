@@ -38,7 +38,7 @@ export interface EventEmitter {
 /**
  * Custom Pilet API parts defined outside of piral-core.
  */
-export interface PiletCustomApi extends PiletLocaleApi, PiletDashboardApi, PiletMenuApi, PiletNotificationsApi, PiletModalsApi, PiletFeedsApi, PiletVueApi, PiletSvelteApi {}
+export interface PiletCustomApi extends PiletLocaleApi, PiletDashboardApi, PiletMenuApi, PiletNotificationsApi, PiletModalsApi, PiletFeedsApi, PiletVueApi, PiletSvelteApi, PiletSolidApi {}
 
 /**
  * Defines the Pilet API from piral-core.
@@ -332,6 +332,22 @@ export interface PiletSvelteApi {
 }
 
 /**
+ * Defines the provided set of Solid Pilet API extensions.
+ */
+export interface PiletSolidApi {
+  /**
+   * Wraps a Solid component for use in Piral.
+   * @param component The name of the root component.
+   * @returns The Piral Solid component.
+   */
+  fromSolid<TProps>(root: Component___1<TProps>): SolidComponent<TProps>;
+  /**
+   * Gets the name of the Solid extension.
+   */
+  SolidExtension: Component___1<ExtensionSlotProps>;
+}
+
+/**
  * Defines the shape of the data store for storing shared data.
  */
 export interface SharedData<TValue = any> {
@@ -601,6 +617,19 @@ export interface SvelteComponent<TProps> {
    * The type of the Svelte component.
    */
   type: "svelte";
+}
+
+export type Component___1<P = {}> = (props: PropsWithChildren<P>) => JSX.Element;
+
+export interface SolidComponent<TProps> {
+  /**
+   * The component root.
+   */
+  root: Component___1<TProps>;
+  /**
+   * The type of the Solid component.
+   */
+  type: "solid";
 }
 
 /**
@@ -960,6 +989,10 @@ export type SvelteComponentInstance<TProps> = TProps & {
   $destroy(): void;
 };
 
+export type PropsWithChildren<P> = P & {
+  children?: JSX.Element;
+};
+
 export type FirstParameter<T extends (arg: any) => any> = T extends (arg: infer P) => any ? P : never;
 
 /**
@@ -968,6 +1001,7 @@ export type FirstParameter<T extends (arg: any) => any> = T extends (arg: infer 
 export interface PiralCustomComponentConverters<TProps> {
   vue(component: VueComponent<TProps>): ForeignComponent<TProps>;
   svelte(component: SvelteComponent<TProps>): ForeignComponent<TProps>;
+  solid(component: SolidComponent<TProps>): ForeignComponent<TProps>;
 }
 
 /**

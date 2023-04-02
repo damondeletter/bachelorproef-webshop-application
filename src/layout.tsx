@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ComponentsState, ErrorComponentsState, Menu, Notifications, SwitchErrorInfo, MenuItemProps } from 'piral';
+import { ComponentsState, ErrorComponentsState, Menu, Notifications, SwitchErrorInfo, MenuItemProps, ExtensionSlot } from 'piral';
 import { Link } from 'react-router-dom';
 import "./layout.css";
 
@@ -38,6 +38,7 @@ export const layout: Partial<ComponentsState> = {
       <Notifications />
       <Menu type="general" />
       <div className="container">{children}</div>
+      {/* <ExtensionSlot name="layout-footer" params={params}/> */}
     </div>
   ),
   MenuContainer: ({ children }) => {
@@ -60,6 +61,7 @@ export const layout: Partial<ComponentsState> = {
               className={`collapse navbar-collapse d-sm-inline-flex flex-sm-row-reverse ${collapsed ? '' : 'show'}`}
               aria-expanded={!collapsed}>
               <ul className="navbar-nav flex-grow">
+                <Link to="/cart">Cart{}</Link>
                 {children}
               </ul>
             </div>
