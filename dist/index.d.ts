@@ -38,7 +38,7 @@ export interface EventEmitter {
 /**
  * Custom Pilet API parts defined outside of piral-core.
  */
-export interface PiletCustomApi extends PiletLocaleApi, PiletDashboardApi, PiletMenuApi, PiletNotificationsApi, PiletModalsApi, PiletFeedsApi, PiletVueApi, PiletSvelteApi, PiletSolidApi {}
+export interface PiletCustomApi extends PiletLocaleApi, PiletDashboardApi, PiletMenuApi, PiletNotificationsApi, PiletModalsApi, PiletFeedsApi, PiletVueApi, PiletSvelteApi, PiletSolidApi, PiletNgApi {}
 
 /**
  * Defines the Pilet API from piral-core.
@@ -348,6 +348,29 @@ export interface PiletSolidApi {
 }
 
 /**
+ * Defines the provided set of Angular Pilet API extensions.
+ */
+export interface PiletNgApi {
+  /**
+   * Defines the module to use when bootstrapping the Angular pilet.
+   */
+  defineNgModule: NgModuleDefiner;
+  /**
+   * Wraps an Angular component for use in Piral. Might reuse a previously
+   * defined module if the component was exported from it.
+   * Alternatively, a module might be passed in, where the first component
+   * of either the bootstrap or the entryComponents declaration is used.
+   * @param component The component root.
+   * @returns The Piral Ng component.
+   */
+  fromNg<T>(component: Type<T>): NgComponent;
+  /**
+   * Angular component for displaying extensions of the given name.
+   */
+  NgExtension: any;
+}
+
+/**
  * Defines the shape of the data store for storing shared data.
  */
 export interface SharedData<TValue = any> {
@@ -630,6 +653,45 @@ export interface SolidComponent<TProps> {
    * The type of the Solid component.
    */
   type: "solid";
+}
+
+/**
+ * Represents the interface implemented by a module definer function.
+ */
+export interface NgModuleDefiner {
+  /**
+   * Defines the module to use when bootstrapping the Angular pilet.
+   * @param ngModule The module to use for running Angular.
+   * @param opts The options to pass when bootstrapping.
+   */
+  <T>(module: Type<T>, opts?: NgOptions): void;
+  /**
+   * Defines the module to lazy load for bootstrapping the Angular pilet.
+   * @param getModule The module lazy loader to use for running Angular.
+   * @param opts The options to pass when bootstrapping.
+   * @returns The module ID to be used to reference components.
+   */
+  <T>(getModule: LazyType<T>, opts?: NgOptions): NgComponentLoader;
+}
+
+/**
+ * @description Represents a type that a Component or other object is instances of.
+ * 
+ * An example of a `Type` is `MyCustomComponent` class, which in JavaScript is represented by
+ * the `MyCustomComponent` constructor function.
+ * @publicApi
+ */
+export const Type: FunctionConstructor;
+
+export interface NgComponent {
+  /**
+   * The component root.
+   */
+  component: Type<any> | NgLazyType;
+  /**
+   * The type of the Angular component.
+   */
+  type: "ng";
 }
 
 /**
@@ -993,6 +1055,46 @@ export type PropsWithChildren<P> = P & {
   children?: JSX.Element;
 };
 
+/**
+ * Options passed through to Angular `bootstrapModule`.
+ * 
+ * Mainly to specify Noop Zone, but also includes compiler specific settings.
+ * See https://angular.io/api/core/PlatformRef#bootstrapModule for possible values.
+ */
+export type NgOptions = Parameters<PlatformRef["bootstrapModule"]>[1];
+
+/**
+ * The lazy loading interface for retrieving Angular components.
+ */
+export interface LazyType<T> {
+  /**
+   * Callback to be invoked for lazy loading an Angular module or component.
+   */
+  (): Promise<{
+    default: Type<T>;
+  }>;
+}
+
+/**
+ * Gives you the ability to use a component from a lazy loaded module.
+ */
+export interface NgComponentLoader {
+  /**
+   * Uses a component from a lazy loaded module.
+   * @param selector The selector defined for the component to load.
+   */
+  (selector: string): NgComponent;
+}
+
+export interface NgLazyType {
+  selector: string;
+  module(): Promise<{
+    default: Type<any>;
+  }>;
+  opts: NgOptions;
+  state: any;
+}
+
 export type FirstParameter<T extends (arg: any) => any> = T extends (arg: infer P) => any ? P : never;
 
 /**
@@ -1002,6 +1104,7 @@ export interface PiralCustomComponentConverters<TProps> {
   vue(component: VueComponent<TProps>): ForeignComponent<TProps>;
   svelte(component: SvelteComponent<TProps>): ForeignComponent<TProps>;
   solid(component: SolidComponent<TProps>): ForeignComponent<TProps>;
+  ng(component: NgComponent): ForeignComponent<TProps>;
 }
 
 /**
@@ -1261,6 +1364,54 @@ export type ExtractDefaultPropTypes<O> = O extends object ? {
   [K in keyof Pick<O, DefaultKeys<O>>]: InferPropType<O[K]>;
 } : {};
 
+export class PlatformRef {
+  private _injector: any;
+  private _modules: any;
+  private _destroyListeners: any;
+  private _destroyed: any;
+  /**
+   * Creates an instance of an `@NgModule` for the given platform.
+   * @deprecated Passing NgModule factories as the `PlatformRef.bootstrapModuleFactory` function
+   * argument is deprecated. Use the `PlatformRef.bootstrapModule` API instead.
+   */
+  bootstrapModuleFactory<M>(moduleFactory: NgModuleFactory<M>, options?: BootstrapOptions): Promise<NgModuleRef<M>>;
+  /**
+   * Creates an instance of an `@NgModule` for a given platform.
+   * @usageNotes ### Simple Example
+   * 
+   * ```typescript
+   * @NgModule ({
+   * imports: [BrowserModule]
+   * })
+   * class MyModule {}
+   * 
+   * let moduleRef = platformBrowser().bootstrapModule(MyModule);
+   * ```
+   */
+  bootstrapModule<M>(moduleType: Type<M>, compilerOptions?: (CompilerOptions & BootstrapOptions) | Array<CompilerOptions & BootstrapOptions>): Promise<NgModuleRef<M>>;
+  private _moduleDoBootstrap: any;
+  /**
+   * Registers a listener to be called when the platform is destroyed.
+   */
+  onDestroy(callback: () => void): void;
+  /**
+   * Retrieves the platform {@link Injector}, which is the parent injector for
+   * every Angular application on the page and provides singleton providers.
+   */
+  get injector(): Injector;
+  /**
+   * Destroys the current Angular platform and all Angular applications on the page.
+   * Destroys all modules and listeners registered with the platform.
+   */
+  destroy(): void;
+  /**
+   * Indicates whether this instance was destroyed.
+   */
+  get destroyed(): boolean;
+  static "ɵfac": ɵɵFactoryDeclaration<PlatformRef, never>;
+  static "ɵprov": ɵɵInjectableDeclaration<PlatformRef>;
+}
+
 /**
  * The context to be transported into the generic components.
  */
@@ -1499,6 +1650,195 @@ export type DefaultKeys<T> = {
   } ? never : K : never;
 }[keyof T];
 
+export class NgModuleFactory<T> {
+  get moduleType(): Type<T>;
+  create(parentInjector: Injector | null): NgModuleRef<T>;
+}
+
+/**
+ * Provides additional options to the bootstrapping process.
+ * @publicApi
+ */
+export interface BootstrapOptions {
+  /**
+   * Optionally specify which `NgZone` should be used.
+   * 
+   * - Provide your own `NgZone` instance.
+   * - `zone.js` - Use default `NgZone` which requires `Zone.js`.
+   * - `noop` - Use `NoopNgZone` which does nothing.
+   */
+  ngZone?: NgZone | "zone.js" | "noop";
+  /**
+   * Optionally specify coalescing event change detections or not.
+   * Consider the following case.
+   * 
+   * <div (click)="doSomething()">
+   *   <button (click)="doSomethingElse()"></button>
+   * </div>
+   * 
+   * When button is clicked, because of the event bubbling, both
+   * event handlers will be called and 2 change detections will be
+   * triggered. We can coalesce such kind of events to only trigger
+   * change detection only once.
+   * 
+   * By default, this option will be false. So the events will not be
+   * coalesced and the change detection will be triggered multiple times.
+   * And if this option be set to true, the change detection will be
+   * triggered async by scheduling a animation frame. So in the case above,
+   * the change detection will only be triggered once.
+   */
+  ngZoneEventCoalescing?: boolean;
+  /**
+   * Optionally specify if `NgZone#run()` method invocations should be coalesced
+   * into a single change detection.
+   * 
+   * Consider the following case.
+   * 
+   * for (let i = 0; i < 10; i ++) {
+   *   ngZone.run(() => {
+   *     // do something
+   *   });
+   * }
+   * 
+   * This case triggers the change detection multiple times.
+   * With ngZoneRunCoalescing options, all change detections in an event loop trigger only once.
+   * In addition, the change detection executes in requestAnimation.
+   */
+  ngZoneRunCoalescing?: boolean;
+}
+
+export class NgModuleRef<T> {
+  /**
+   * The injector that contains all of the providers of the `NgModule`.
+   */
+  get injector(): EnvironmentInjector;
+  /**
+   * The resolver that can retrieve component factories in a context of this module.
+   * 
+   * Note: since v13, dynamic component creation via
+   * [`ViewContainerRef.createComponent`](api/core/ViewContainerRef#createComponent)
+   * does **not** require resolving component factory: component class can be used directly.
+   * @deprecated Angular no longer requires Component factories. Please use other APIs where
+   * Component class can be used directly.
+   */
+  get componentFactoryResolver(): ComponentFactoryResolver;
+  /**
+   * The `NgModule` instance.
+   */
+  get instance(): T;
+  /**
+   * Destroys the module instance and all of the data structures associated with it.
+   */
+  destroy(): void;
+  /**
+   * Registers a callback to be executed when the module is destroyed.
+   */
+  onDestroy(callback: () => void): void;
+}
+
+/**
+ * Options for creating a compiler.
+ * 
+ * Note: the `useJit` and `missingTranslation` config options are not used in Ivy, passing them has
+ * no effect. Those config options are deprecated since v13.
+ * @publicApi
+ */
+export type CompilerOptions = {
+  /**
+   * @deprecated not used at all in Ivy, providing this config option has no effect.
+   */
+  useJit?: boolean;
+  defaultEncapsulation?: ViewEncapsulation;
+  providers?: Array<StaticProvider>;
+  /**
+   * @deprecated not used at all in Ivy, providing this config option has no effect.
+   */
+  missingTranslation?: MissingTranslationStrategy;
+  preserveWhitespaces?: boolean;
+};
+
+export class Injector {
+  static THROW_IF_NOT_FOUND: {};
+  static NULL: Injector;
+  /**
+   * Retrieves an instance from the injector based on the provided token.
+   * @returns The instance from the injector if defined, otherwise the `notFoundValue`.
+   * @throws When the `notFoundValue` is `undefined` or `Injector.THROW_IF_NOT_FOUND`.
+   */
+  get<T>(token: ProviderToken<T>, notFoundValue?: T, flags?: InjectFlags): T;
+  /**
+   * @deprecated from v4.0.0 use ProviderToken<T>
+   * @suppress {duplicate}
+   */
+  get(token: any, notFoundValue?: any): any;
+  /**
+   * @deprecated from v5 use the new signature Injector.create(options)
+   */
+  static create(providers: Array<StaticProvider>, parent?: Injector): Injector;
+  /**
+   * Creates a new injector instance that provides one or more dependencies,
+   * according to a given type or types of `StaticProvider`.
+   * @param options An object with the following properties:
+   * * `providers`: An array of providers of the [StaticProvider type](api/core/StaticProvider).
+   * * `parent`: (optional) A parent injector.
+   * * `name`: (optional) A developer-defined identifying name for the new injector.
+   * @returns The new injector instance.
+   */
+  static create(options: {
+    providers: Array<StaticProvider>;
+    parent?: Injector;
+    name?: string;
+  }): Injector;
+  /**
+   * @nocollapse
+   */
+  static "ɵprov": unknown;
+}
+
+/**
+ * @publicApi
+ */
+export type ɵɵFactoryDeclaration<T, CtorDependencies extends Array<CtorDependency>> = unknown;
+
+/**
+ * Information about how a type or `InjectionToken` interfaces with the DI system.
+ * 
+ * At a minimum, this includes a `factory` which defines how to create the given type `T`, possibly
+ * requesting injection of other types if necessary.
+ * 
+ * Optionally, a `providedIn` parameter specifies that the given type belongs to a particular
+ * `Injector`, `NgModule`, or a special scope (e.g. `'root'`). A value of `null` indicates
+ * that the injectable does not belong to any scope.
+ * @codeGenApi
+ * @publicApi The ViewEngine compiler emits code with this type for injectables. This code is
+ * deployed to npm, and should be treated as public api.
+ */
+export interface ɵɵInjectableDeclaration<T> {
+  /**
+   * Specifies that the given type belongs to a particular injector:
+   * - `InjectorType` such as `NgModule`,
+   * - `'root'` the root injector
+   * - `'any'` all injectors.
+   * - `null`, does not belong to any injector. Must be explicitly listed in the injector
+   *   `providers`.
+   */
+  providedIn: InjectorType<any> | "root" | "platform" | "any" | "environment" | null;
+  /**
+   * The token to which this definition belongs.
+   * 
+   * Note that this may not be the same as the type that the `factory` will create.
+   */
+  token: unknown;
+  /**
+   * Factory method to execute to create an instance of the injectable.
+   */
+  factory(t?: Type<any>): T;
+  /**
+   * In a case of no explicit injector, a location where the instance of the injectable is stored.
+   */
+  value: T | undefined;
+}
+
 export interface NavigationApi {
   /**
    * Pushes a new location onto the history stack.
@@ -1659,6 +1999,270 @@ export type Prop<T, D = T> = PropOptions___1<T, D> | PropType___1<T>;
 
 export type IfAny<T, Y, N> = 0 extends 1 & T ? Y : N;
 
+export class NgZone {
+  readonly hasPendingMacrotasks: boolean;
+  readonly hasPendingMicrotasks: boolean;
+  /**
+   * Whether there are no outstanding microtasks or macrotasks.
+   */
+  readonly isStable: boolean;
+  /**
+   * Notifies when code enters Angular Zone. This gets fired first on VM Turn.
+   */
+  readonly onUnstable: EventEmitter___1<any>;
+  /**
+   * Notifies when there is no more microtasks enqueued in the current VM Turn.
+   * This is a hint for Angular to do change detection, which may enqueue more microtasks.
+   * For this reason this event can fire multiple times per VM Turn.
+   */
+  readonly onMicrotaskEmpty: EventEmitter___1<any>;
+  /**
+   * Notifies when the last `onMicrotaskEmpty` has run and there are no more microtasks, which
+   * implies we are about to relinquish VM turn.
+   * This event gets called just once.
+   */
+  readonly onStable: EventEmitter___1<any>;
+  /**
+   * Notifies that an error has been delivered.
+   */
+  readonly onError: EventEmitter___1<any>;
+  constructor({ enableLongStackTrace, shouldCoalesceEventChangeDetection, shouldCoalesceRunChangeDetection }: {
+    enableLongStackTrace?: boolean | undefined;
+    shouldCoalesceEventChangeDetection?: boolean | undefined;
+    shouldCoalesceRunChangeDetection?: boolean | undefined;
+  });
+  static isInAngularZone(): boolean;
+  static assertInAngularZone(): void;
+  static assertNotInAngularZone(): void;
+  /**
+   * Executes the `fn` function synchronously within the Angular zone and returns value returned by
+   * the function.
+   * 
+   * Running functions via `run` allows you to reenter Angular zone from a task that was executed
+   * outside of the Angular zone (typically started via {@link #runOutsideAngular}).
+   * 
+   * Any future tasks or microtasks scheduled from within this function will continue executing from
+   * within the Angular zone.
+   * 
+   * If a synchronous error happens it will be rethrown and not reported via `onError`.
+   */
+  run<T>(fn: (...args: Array<any>) => T, applyThis?: any, applyArgs?: Array<any>): T;
+  /**
+   * Executes the `fn` function synchronously within the Angular zone as a task and returns value
+   * returned by the function.
+   * 
+   * Running functions via `run` allows you to reenter Angular zone from a task that was executed
+   * outside of the Angular zone (typically started via {@link #runOutsideAngular}).
+   * 
+   * Any future tasks or microtasks scheduled from within this function will continue executing from
+   * within the Angular zone.
+   * 
+   * If a synchronous error happens it will be rethrown and not reported via `onError`.
+   */
+  runTask<T>(fn: (...args: Array<any>) => T, applyThis?: any, applyArgs?: Array<any>, name?: string): T;
+  /**
+   * Same as `run`, except that synchronous errors are caught and forwarded via `onError` and not
+   * rethrown.
+   */
+  runGuarded<T>(fn: (...args: Array<any>) => T, applyThis?: any, applyArgs?: Array<any>): T;
+  /**
+   * Executes the `fn` function synchronously in Angular's parent zone and returns value returned by
+   * the function.
+   * 
+   * Running functions via {@link #runOutsideAngular} allows you to escape Angular's zone and do
+   * work that
+   * doesn't trigger Angular change-detection or is subject to Angular's error handling.
+   * 
+   * Any future tasks or microtasks scheduled from within this function will continue executing from
+   * outside of the Angular zone.
+   * 
+   * Use {@link #run} to reenter the Angular zone and do work that updates the application model.
+   */
+  runOutsideAngular<T>(fn: (...args: Array<any>) => T): T;
+}
+
+export class EnvironmentInjector implements Injector {
+  /**
+   * Retrieves an instance from the injector based on the provided token.
+   * @returns The instance from the injector if defined, otherwise the `notFoundValue`.
+   * @throws When the `notFoundValue` is `undefined` or `Injector.THROW_IF_NOT_FOUND`.
+   */
+  get<T>(token: ProviderToken<T>, notFoundValue?: T, flags?: InjectFlags): T;
+  /**
+   * Retrieves an instance from the injector based on the provided token.
+   * @deprecated from v4.0.0 use ProviderToken<T>
+   * @suppress {duplicate}
+   */
+  get(token: any, notFoundValue?: any): any;
+  /**
+   * Runs the given function in the context of this `EnvironmentInjector`.
+   * 
+   * Within the function's stack frame, `inject` can be used to inject dependencies from this
+   * injector. Note that `inject` is only usable synchronously, and cannot be used in any
+   * asynchronous callbacks or after any `await` points.
+   * @param fn the closure to be run in the context of this injector
+   * @returns the return value of the function, if any
+   */
+  runInContext<ReturnT>(fn: () => ReturnT): ReturnT;
+  destroy(): void;
+}
+
+export class ComponentFactoryResolver {
+  static NULL: ComponentFactoryResolver;
+  /**
+   * Retrieves the factory object that creates a component of the given type.
+   * @param component The component type.
+   */
+  resolveComponentFactory<T>(component: Type<T>): ComponentFactory<T>;
+}
+
+/**
+ * Defines the CSS styles encapsulation policies for the {@link Component} decorator's
+ * `encapsulation` option.
+ * 
+ * See {@link Component#encapsulation encapsulation}.
+ * @usageNotes ### Example
+ * 
+ * {@example core/ts/metadata/encapsulation.ts region='longform'}
+ * @publicApi
+ */
+export enum ViewEncapsulation {
+  /**
+   * Emulates a native Shadow DOM encapsulation behavior by adding a specific attribute to the
+   * component's host element and applying the same attribute to all the CSS selectors provided
+   * via {@link Component#styles styles} or {@link Component#styleUrls styleUrls}.
+   * 
+   * This is the default option.
+   */
+  Emulated = 0,
+  /**
+   * Doesn't provide any sort of CSS style encapsulation, meaning that all the styles provided
+   * via {@link Component#styles styles} or {@link Component#styleUrls styleUrls} are applicable
+   * to any HTML element of the application regardless of their host Component.
+   */
+  None = 2,
+  /**
+   * Uses the browser's native Shadow DOM API to encapsulate CSS styles, meaning that it creates
+   * a ShadowRoot for the component's host element which is then used to encapsulate
+   * all the Component's styling.
+   */
+  ShadowDom = 3,
+}
+
+/**
+ * Describes how an `Injector` should be configured as static (that is, without reflection).
+ * A static provider provides tokens to an injector for various types of dependencies.
+ * @see  `Injector.create()`.
+ * @see ["Dependency Injection Guide"](guide/dependency-injection-providers).
+ * @publicApi
+ */
+export type StaticProvider = ValueProvider | ExistingProvider | StaticClassProvider | ConstructorProvider | FactoryProvider | Array<any>;
+
+/**
+ * Use this enum at bootstrap as an option of `bootstrapModule` to define the strategy
+ * that the compiler should use in case of missing translations:
+ * - Error: throw if you have missing translations.
+ * - Warning (default): show a warning in the console and/or shell.
+ * - Ignore: do nothing.
+ * 
+ * See the [i18n guide](guide/i18n-common-merge#report-missing-translations) for more information.
+ * @usageNotes ### Example
+ * ```typescript
+ * import { MissingTranslationStrategy } from '@angular/core';
+ * import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+ * import { AppModule } from './app/app.module';
+ * 
+ * platformBrowserDynamic().bootstrapModule(AppModule, {
+ *   missingTranslation: MissingTranslationStrategy.Error
+ * });
+ * ```
+ * @publicApi
+ */
+export enum MissingTranslationStrategy {
+  Error = 0,
+  Warning = 1,
+  Ignore = 2,
+}
+
+/**
+ * @description Token that can be used to retrieve an instance from an injector or through a query.
+ * @publicApi
+ */
+export type ProviderToken<T> = Type<T> | AbstractType<T> | InjectionToken<T>;
+
+/**
+ * Injection flags for DI.
+ * @publicApi
+ * @deprecated use an options object for `inject` instead.
+ */
+export enum InjectFlags {
+  /**
+   * Check self and check parent injector if needed
+   */
+  Default = 0,
+  /**
+   * Specifies that an injector should retrieve a dependency from any injector until reaching the
+   * host element of the current component. (Only used with Element Injector)
+   */
+  Host = 1,
+  /**
+   * Don't ascend to ancestors of the node requesting injection.
+   */
+  Self = 2,
+  /**
+   * Skip the node that is requesting injection.
+   */
+  SkipSelf = 4,
+  /**
+   * Inject `defaultValue` instead if token not found.
+   */
+  Optional = 8,
+}
+
+/**
+ * An object literal of this type is used to represent the metadata of a constructor dependency.
+ * The type itself is never referred to from generated code.
+ * @publicApi
+ */
+export type CtorDependency = {
+  /**
+   * If an `@Attribute` decorator is used, this represents the injected attribute's name. If the
+   * attribute name is a dynamic expression instead of a string literal, this will be the unknown
+   * type.
+   */
+  attribute?: string | unknown;
+  /**
+   * If `@Optional()` is used, this key is set to true.
+   */
+  optional?: true;
+  /**
+   * If `@Host` is used, this key is set to true.
+   */
+  host?: true;
+  /**
+   * If `@Self` is used, this key is set to true.
+   */
+  self?: true;
+  /**
+   * If `@SkipSelf` is used, this key is set to true.
+   */
+  skipSelf?: true;
+} | null;
+
+/**
+ * A type which has an `InjectorDef` static field.
+ * 
+ * `InjectorTypes` can be used to configure a `StaticInjector`.
+ * 
+ * This is an opaque type whose structure is highly version dependent. Do not rely on any
+ * properties.
+ * @publicApi
+ */
+export interface InjectorType<T> extends Type<T> {
+  "ɵfac"?: unknown;
+  "ɵinj": unknown;
+}
+
 export interface NavigationBlocker {
   (tx: NavigationTransition): void;
 }
@@ -1755,6 +2359,232 @@ export interface PropOptions___1<T = any, D = T> {
 
 export type PropType___1<T> = PropConstructor<T> | Array<PropConstructor<T>>;
 
+/**
+ * Use in components with the `@Output` directive to emit custom events
+ * synchronously or asynchronously, and register handlers for those events
+ * by subscribing to an instance.
+ * @usageNotes Extends
+ * [RxJS `Subject`](https://rxjs.dev/api/index/class/Subject)
+ * for Angular by adding the `emit()` method.
+ * 
+ * In the following example, a component defines two output properties
+ * that create event emitters. When the title is clicked, the emitter
+ * emits an open or close event to toggle the current visibility state.
+ * 
+ * ```html
+ * @Component ({
+ * selector: 'zippy',
+ * template: `
+ * <div class="zippy">
+ * <div (click)="toggle()">Toggle</div>
+ * <div [hidden]="!visible">
+ * <ng-content></ng-content>
+ * </div>
+ * </div>`})
+ * export class Zippy {
+ * visible: boolean = true;
+ * @Output () open: EventEmitter<any> = new EventEmitter();
+ * @Output () close: EventEmitter<any> = new EventEmitter();
+ * 
+ * toggle() {
+ * this.visible = !this.visible;
+ * if (this.visible) {
+ * this.open.emit(null);
+ * } else {
+ * this.close.emit(null);
+ * }
+ * }
+ * }
+ * ```
+ * 
+ * Access the event object with the `$event` argument passed to the output event
+ * handler:
+ * 
+ * ```html
+ * <zippy (open)="onOpen($event)" (close)="onClose($event)"></zippy>
+ * ```
+ * @see [Observables in Angular](guide/observables-in-angular)
+ * @publicApi
+ * @publicApi
+ */
+export const EventEmitter___1: {
+  new (isAsync?: boolean): EventEmitter___1<any>;
+  new <T>(isAsync?: boolean): EventEmitter___1<T>;
+  readonly prototype: EventEmitter___1<any>;
+};
+
+export class ComponentFactory<C> {
+  /**
+   * The component's HTML selector.
+   */
+  get selector(): string;
+  /**
+   * The type of component the factory will create.
+   */
+  get componentType(): Type<any>;
+  /**
+   * Selector for all <ng-content> elements in the component.
+   */
+  get ngContentSelectors(): Array<string>;
+  /**
+   * The inputs of the component.
+   */
+  get inputs(): Array<{
+    propName: string;
+    templateName: string;
+  }>;
+  /**
+   * The outputs of the component.
+   */
+  get outputs(): Array<{
+    propName: string;
+    templateName: string;
+  }>;
+  /**
+   * Creates a new component.
+   */
+  create(injector: Injector, projectableNodes?: Array<Array<any>>, rootSelectorOrNode?: string | any, environmentInjector?: EnvironmentInjector | NgModuleRef<any>): ComponentRef<C>;
+}
+
+/**
+ * Configures the `Injector` to return a value for a token.
+ * @see ["Dependency Injection Guide"](guide/dependency-injection).
+ * @usageNotes ### Example
+ * 
+ * {@example core/di/ts/provider_spec.ts region='ValueProvider'}
+ * 
+ * ### Multi-value example
+ * 
+ * {@example core/di/ts/provider_spec.ts region='MultiProviderAspect'}
+ * @publicApi
+ */
+export interface ValueProvider extends ValueSansProvider {
+  /**
+   * An injection token. Typically an instance of `Type` or `InjectionToken`, but can be `any`.
+   */
+  provide: any;
+  /**
+   * When true, injector returns an array of instances. This is useful to allow multiple
+   * providers spread across many files to provide configuration information to a common token.
+   */
+  multi?: boolean;
+}
+
+/**
+ * Configures the `Injector` to return a value of another `useExisting` token.
+ * @see ["Dependency Injection Guide"](guide/dependency-injection).
+ * @usageNotes {@example core/di/ts/provider_spec.ts region='ExistingProvider'}
+ * 
+ * ### Multi-value example
+ * 
+ * {@example core/di/ts/provider_spec.ts region='MultiProviderAspect'}
+ * @publicApi
+ */
+export interface ExistingProvider extends ExistingSansProvider {
+  /**
+   * An injection token. Typically an instance of `Type` or `InjectionToken`, but can be `any`.
+   */
+  provide: any;
+  /**
+   * When true, injector returns an array of instances. This is useful to allow multiple
+   * providers spread across many files to provide configuration information to a common token.
+   */
+  multi?: boolean;
+}
+
+/**
+ * Configures the `Injector` to return an instance of `useClass` for a token.
+ * @see ["Dependency Injection Guide"](guide/dependency-injection).
+ * @usageNotes {@example core/di/ts/provider_spec.ts region='StaticClassProvider'}
+ * 
+ * Note that following two providers are not equal:
+ * 
+ * {@example core/di/ts/provider_spec.ts region='StaticClassProviderDifference'}
+ * 
+ * ### Multi-value example
+ * 
+ * {@example core/di/ts/provider_spec.ts region='MultiProviderAspect'}
+ * @publicApi
+ */
+export interface StaticClassProvider extends StaticClassSansProvider {
+  /**
+   * An injection token. Typically an instance of `Type` or `InjectionToken`, but can be `any`.
+   */
+  provide: any;
+  /**
+   * When true, injector returns an array of instances. This is useful to allow multiple
+   * providers spread across many files to provide configuration information to a common token.
+   */
+  multi?: boolean;
+}
+
+/**
+ * Configures the `Injector` to return an instance of a token.
+ * @see ["Dependency Injection Guide"](guide/dependency-injection).
+ * @usageNotes {@example core/di/ts/provider_spec.ts region='ConstructorProvider'}
+ * 
+ * ### Multi-value example
+ * 
+ * {@example core/di/ts/provider_spec.ts region='MultiProviderAspect'}
+ * @publicApi
+ */
+export interface ConstructorProvider extends ConstructorSansProvider {
+  /**
+   * An injection token. Typically an instance of `Type` or `InjectionToken`, but can be `any`.
+   */
+  provide: Type<any>;
+  /**
+   * When true, injector returns an array of instances. This is useful to allow multiple
+   * providers spread across many files to provide configuration information to a common token.
+   */
+  multi?: boolean;
+}
+
+/**
+ * Configures the `Injector` to return a value by invoking a `useFactory` function.
+ * @see ["Dependency Injection Guide"](guide/dependency-injection).
+ * @usageNotes {@example core/di/ts/provider_spec.ts region='FactoryProvider'}
+ * 
+ * Dependencies can also be marked as optional:
+ * 
+ * {@example core/di/ts/provider_spec.ts region='FactoryProviderOptionalDeps'}
+ * 
+ * ### Multi-value example
+ * 
+ * {@example core/di/ts/provider_spec.ts region='MultiProviderAspect'}
+ * @publicApi
+ */
+export interface FactoryProvider extends FactorySansProvider {
+  /**
+   * An injection token. (Typically an instance of `Type` or `InjectionToken`, but can be `any`).
+   */
+  provide: any;
+  /**
+   * When true, injector returns an array of instances. This is useful to allow multiple
+   * providers spread across many files to provide configuration information to a common token.
+   */
+  multi?: boolean;
+}
+
+/**
+ * @description Represents an abstract class `T`, if applied to a concrete class it would stop being
+ * instantiable.
+ * @publicApi
+ */
+export interface AbstractType<T> extends Function {
+  prototype: T;
+}
+
+export class InjectionToken<T> {
+  protected _desc: string;
+  readonly "ɵprov": unknown;
+  constructor(_desc: string, options?: {
+    providedIn?: Type<any> | "root" | "platform" | "any" | null;
+    factory(): T;
+  });
+  toString(): string;
+}
+
 export interface NavigationTransition extends NavigationUpdate {
   retry?(): void;
 }
@@ -1793,6 +2623,131 @@ export type PropConstructor<T> = {
 } | {
   new (...args: Array<string>): Function;
 };
+
+export class ComponentRef<C> {
+  /**
+   * Updates a specified input name to a new value. Using this method will properly mark for check
+   * component using the `OnPush` change detection strategy. It will also assure that the
+   * `OnChanges` lifecycle hook runs when a dynamically created component is change-detected.
+   * @param name The name of an input.
+   * @param value The new value of an input.
+   */
+  setInput(name: string, value: unknown): void;
+  /**
+   * The host or anchor [element](guide/glossary#element) for this component instance.
+   */
+  get location(): ElementRef;
+  /**
+   * The [dependency injector](guide/glossary#injector) for this component instance.
+   */
+  get injector(): Injector;
+  /**
+   * This component instance.
+   */
+  get instance(): C;
+  /**
+   * The [host view](guide/glossary#view-tree) defined by the template
+   * for this component instance.
+   */
+  get hostView(): ViewRef;
+  /**
+   * The change detector for this component instance.
+   */
+  get changeDetectorRef(): ChangeDetectorRef;
+  /**
+   * The type of this component (as created by a `ComponentFactory` class).
+   */
+  get componentType(): Type<any>;
+  /**
+   * Destroys the component instance and all of the data structures associated with it.
+   */
+  destroy(): void;
+  /**
+   * A lifecycle hook that provides additional developer-defined cleanup
+   * functionality for the component.
+   * @param callback A handler function that cleans up developer-defined data
+   * associated with this component. Called when the `destroy()` method is invoked.
+   */
+  onDestroy(callback: Function): void;
+}
+
+/**
+ * Configures the `Injector` to return a value for a token.
+ * Base for `ValueProvider` decorator.
+ * @publicApi
+ */
+export interface ValueSansProvider {
+  /**
+   * The value to inject.
+   */
+  useValue: any;
+}
+
+/**
+ * Configures the `Injector` to return a value of another `useExisting` token.
+ * @see  `ExistingProvider`
+ * @see ["Dependency Injection Guide"](guide/dependency-injection).
+ * @publicApi
+ */
+export interface ExistingSansProvider {
+  /**
+   * Existing `token` to return. (Equivalent to `injector.get(useExisting)`)
+   */
+  useExisting: any;
+}
+
+/**
+ * Configures the `Injector` to return an instance of `useClass` for a token.
+ * Base for `StaticClassProvider` decorator.
+ * @publicApi
+ */
+export interface StaticClassSansProvider {
+  /**
+   * An optional class to instantiate for the `token`. By default, the `provide`
+   * class is instantiated.
+   */
+  useClass: Type<any>;
+  /**
+   * A list of `token`s to be resolved by the injector. The list of values is then
+   * used as arguments to the `useClass` constructor.
+   */
+  deps: Array<any>;
+}
+
+/**
+ * Configures the `Injector` to return an instance of a token.
+ * @see ["Dependency Injection Guide"](guide/dependency-injection).
+ * @usageNotes ```ts
+ * @Injectable (SomeModule, {deps: []})
+ * class MyService {}
+ * ```
+ * @publicApi
+ */
+export interface ConstructorSansProvider {
+  /**
+   * A list of `token`s to be resolved by the injector.
+   */
+  deps?: Array<any>;
+}
+
+/**
+ * Configures the `Injector` to return a value by invoking a `useFactory` function.
+ * @see  `FactoryProvider`
+ * @see ["Dependency Injection Guide"](guide/dependency-injection).
+ * @publicApi
+ */
+export interface FactorySansProvider {
+  /**
+   * A function to invoke to create a value for this `token`. The function is invoked with
+   * resolved values of `token`s in the `deps` field.
+   */
+  useFactory: Function;
+  /**
+   * A list of `token`s to be resolved by the injector. The list of values is then
+   * used as arguments to the `useFactory` function.
+   */
+  deps?: Array<any>;
+}
 
 export type NavigationAction = "POP" | "PUSH" | "REPLACE";
 
@@ -3817,6 +4772,98 @@ export interface SvgPropertiesHyphen<TLength = (string & {}) | 0, TTime = string
   "white-space"?: WhiteSpace | undefined;
   "word-spacing"?: WordSpacing<TLength> | undefined;
   "writing-mode"?: WritingMode | undefined;
+}
+
+export class ElementRef<T = any> {
+  /**
+   * The underlying native element or `null` if direct access to native elements is not supported
+   * (e.g. when the application runs in a web worker).
+   * 
+   * <div class="callout is-critical">
+   *   <header>Use with caution</header>
+   *   <p>
+   *    Use this API as the last resort when direct access to DOM is needed. Use templating and
+   *    data-binding provided by Angular instead. Alternatively you can take a look at {@link * Renderer2}
+   *    which provides API that can safely be used even when direct access to native elements is not
+   *    supported.
+   *   </p>
+   *   <p>
+   *    Relying on direct DOM access creates tight coupling between your application and rendering
+   *    layers which will make it impossible to separate the two and deploy your application into a
+   *    web worker.
+   *   </p>
+   * </div>
+   */
+  nativeElement: T;
+  constructor(nativeElement: T);
+}
+
+export class ViewRef extends ChangeDetectorRef {
+  /**
+   * Destroys this view and all of the data structures associated with it.
+   */
+  destroy(): void;
+  /**
+   * Reports whether this view has been destroyed.
+   * @returns True after the `destroy()` method has been called, false otherwise.
+   */
+  get destroyed(): boolean;
+  /**
+   * A lifecycle hook that provides additional developer-defined cleanup
+   * functionality for views.
+   * @param callback A handler function that cleans up developer-defined data
+   * associated with a view. Called when the `destroy()` method is invoked.
+   */
+  onDestroy(callback: Function): any;
+}
+
+export class ChangeDetectorRef {
+  /**
+   * When a view uses the {@link ChangeDetectionStrategy#OnPush OnPush} (checkOnce)
+   * change detection strategy, explicitly marks the view as changed so that
+   * it can be checked again.
+   * 
+   * Components are normally marked as dirty (in need of rerendering) when inputs
+   * have changed or events have fired in the view. Call this method to ensure that
+   * a component is checked even if these triggers have not occurred.
+   * 
+   * <!-- TODO: Add a link to a chapter on OnPush components -->
+   */
+  markForCheck(): void;
+  /**
+   * Detaches this view from the change-detection tree.
+   * A detached view is  not checked until it is reattached.
+   * Use in combination with `detectChanges()` to implement local change detection checks.
+   * 
+   * Detached views are not checked during change detection runs until they are
+   * re-attached, even if they are marked as dirty.
+   * 
+   * <!-- TODO: Add a link to a chapter on detach/reattach/local digest -->
+   * <!-- TODO: Add a live demo once ref.detectChanges is merged into master -->
+   */
+  detach(): void;
+  /**
+   * Checks this view and its children. Use in combination with {@link ChangeDetectorRef#detach * detach}
+   * to implement local change detection checks.
+   * 
+   * <!-- TODO: Add a link to a chapter on detach/reattach/local digest -->
+   * <!-- TODO: Add a live demo once ref.detectChanges is merged into master -->
+   */
+  detectChanges(): void;
+  /**
+   * Checks the change detector and its children, and throws if any changes are detected.
+   * 
+   * Use in development mode to verify that running change detection doesn't introduce
+   * other changes. Calling it in production mode is a noop.
+   */
+  checkNoChanges(): void;
+  /**
+   * Re-attaches the previously detached view to the change detection tree.
+   * Views are attached to the tree by default.
+   * 
+   * <!-- TODO: Add a link to a chapter on detach/reattach/local digest -->
+   */
+  reattach(): void;
 }
 
 export interface StandardLonghandProperties<TLength = (string & {}) | 0, TTime = string & {}> {

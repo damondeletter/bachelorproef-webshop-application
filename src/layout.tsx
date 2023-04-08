@@ -38,7 +38,7 @@ export const layout: Partial<ComponentsState> = {
       <Notifications />
       <Menu type="general" />
       <div className="container">{children}</div>
-      {/* <ExtensionSlot name="layout-footer" params={params}/> */}
+      
     </div>
   ),
   MenuContainer: ({ children }) => {
@@ -61,7 +61,6 @@ export const layout: Partial<ComponentsState> = {
               className={`collapse navbar-collapse d-sm-inline-flex flex-sm-row-reverse ${collapsed ? '' : 'show'}`}
               aria-expanded={!collapsed}>
               <ul className="navbar-nav flex-grow">
-                <Link to="/cart">Cart{}</Link>
                 {children}
               </ul>
             </div>

@@ -362,9 +362,7 @@ var layout = {
       "aria-expanded": !collapsed
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("ul", {
       className: "navbar-nav flex-grow"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__.Link, {
-      to: "/cart"
-    }, "Cart"), children)))));
+    }, children)))));
   },
   MenuItem: MenuItem
 };
@@ -8348,7 +8346,7 @@ function installPiralDebug(options) {
             dependencies: "tslib,react,react-dom,react-router,react-router-dom",
         },
         build: {
-            date: "2023-04-04T05:37:42.787Z",
+            date: "2023-04-08T13:40:13.252Z",
             cli: "0.15.8",
             compat: "0.15",
         },
@@ -59082,7 +59080,7 @@ function invariant(condition, message) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	(() => {
-/******/ 		__webpack_require__.h = () => ("664991f4371a6efffc61")
+/******/ 		__webpack_require__.h = () => ("6fb6a9ef45573f38a9e3")
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/global */
